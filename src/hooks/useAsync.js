@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-/**
- * Runs an async loader whenever `deps` change and keeps the previous data on screen
- * while the next request is in flight (no flash of skeletons when a filter changes).
- */
 export function useAsyncData(loader, deps) {
   const [state, setState] = useState({ data: null, status: 'loading', error: null });
   const loaderRef = useRef(loader);

@@ -1,7 +1,7 @@
-import { Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { FullPageLoader } from '../components/ui/LoadingState';
-import { ProtectedRoute, PublicOnlyRoute } from './guards';
+import { Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { FullPageLoader } from "../components/ui/LoadingState";
+import { ProtectedRoute, PublicOnlyRoute } from "./guards";
 import {
   AnalyticsPage,
   BudgetsPage,
@@ -15,7 +15,7 @@ import {
   SignupPage,
   TransactionDetailPage,
   TransactionsPage,
-} from './pages';
+} from "./pages";
 
 export default function AppRoutes() {
   return (

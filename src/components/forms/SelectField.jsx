@@ -1,9 +1,17 @@
-import { useId } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { FieldLabel, FieldMessage } from './TextField';
+import { useId } from "react";
+import { ChevronDown } from "lucide-react";
+import { FieldLabel, FieldMessage } from "./TextField";
 
-/** Native <select> (best keyboard + mobile behaviour) with the app's styling. */
-export default function SelectField({ label, options, placeholder, error, hint, id, className = '', ...selectProps }) {
+export default function SelectField({
+  label,
+  options,
+  placeholder,
+  error,
+  hint,
+  id,
+  className = "",
+  ...selectProps
+}) {
   const autoId = useId();
   const selectId = id ?? autoId;
   const messageId = `${selectId}-message`;
@@ -31,7 +39,11 @@ export default function SelectField({ label, options, placeholder, error, hint, 
             </option>
           ))}
         </select>
-        <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
+        <ChevronDown
+          size={16}
+          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted"
+          aria-hidden="true"
+        />
       </div>
       <FieldMessage id={messageId} error={error} hint={hint} />
     </div>

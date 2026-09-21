@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-/** Scroll lock, focus trap, Escape-to-close and focus restoration for dialogs and drawers. */
 export function useDialogBehavior({ active, panelRef, onClose }) {
   const closeRef = useRef(onClose);
   useEffect(() => {
@@ -15,19 +15,25 @@ export function useDialogBehavior({ active, panelRef, onClose }) {
     const previouslyFocused = document.activeElement;
     const { body } = document;
     const previousOverflow = body.style.overflow;
-    body.style.overflow = 'hidden';
+    body.style.overflow = "hidden";
 
-    const focusables = () => (panel ? Array.from(panel.querySelectorAll(FOCUSABLE)).filter((el) => el.offsetParent !== null) : []);
-    const initial = panel?.querySelector('[data-autofocus]') ?? focusables()[0] ?? panel;
+    const focusables = () =>
+      panel
+        ? Array.from(panel.querySelectorAll(FOCUSABLE)).filter(
+            (el) => el.offsetParent !== null,
+          )
+        : [];
+    const initial =
+      panel?.querySelector("[data-autofocus]") ?? focusables()[0] ?? panel;
     initial?.focus({ preventScroll: true });
 
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         event.stopPropagation();
         closeRef.current?.();
         return;
       }
-      if (event.key !== 'Tab') return;
+      if (event.key !== "Tab") return;
       const items = focusables();
       if (!items.length) {
         event.preventDefault();
@@ -43,11 +49,12 @@ export function useDialogBehavior({ active, panelRef, onClose }) {
         first.focus();
       }
     };
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
       body.style.overflow = previousOverflow;
-      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus({ preventScroll: true });
+      if (previouslyFocused instanceof HTMLElement)
+        previouslyFocused.focus({ preventScroll: true });
     };
   }, [active, panelRef]);
 }

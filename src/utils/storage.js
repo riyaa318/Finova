@@ -1,4 +1,4 @@
-const PREFIX = 'finova:';
+const PREFIX = "finova:";
 
 function createStore(getBackend) {
   const backend = () => {
@@ -35,7 +35,5 @@ function createStore(getBackend) {
   };
 }
 
-/** Persistent storage (survives browser restarts). */
 export const storage = createStore(() => window.localStorage);
-/** Tab-scoped storage (used for sessions without "remember me"). */
 export const sessionStore = createStore(() => window.sessionStorage);

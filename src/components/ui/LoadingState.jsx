@@ -1,7 +1,8 @@
-/** Skeleton primitives + composed loaders. The shimmer is a CSS effect (see `.skeleton`). */
-export const Skeleton = ({ className = '', style }) => <div aria-hidden="true" style={style} className={`skeleton ${className}`} />;
+export const Skeleton = ({ className = "", style }) => (
+  <div aria-hidden="true" style={style} className={`skeleton ${className}`} />
+);
 
-const Busy = ({ label, children, className = '' }) => (
+const Busy = ({ label, children, className = "" }) => (
   <div role="status" aria-busy="true" aria-label={label} className={className}>
     {children}
   </div>
@@ -17,14 +18,17 @@ export const StatCardSkeleton = () => (
 );
 
 export const StatGridSkeleton = () => (
-  <Busy label="Loading balances" className="grid grid-cols-1 gap-4 xs:grid-cols-2 xl:grid-cols-4">
+  <Busy
+    label="Loading balances"
+    className="grid grid-cols-1 gap-4 xs:grid-cols-2 xl:grid-cols-4"
+  >
     {Array.from({ length: 4 }, (_, i) => (
       <StatCardSkeleton key={i} />
     ))}
   </Busy>
 );
 
-export const ChartSkeleton = ({ height = 260, className = '' }) => (
+export const ChartSkeleton = ({ height = 260, className = "" }) => (
   <Busy label="Loading chart" className={`card p-5 ${className}`}>
     <Skeleton className="h-5 w-40" />
     <Skeleton className="mt-2 h-4 w-56" />
@@ -32,8 +36,11 @@ export const ChartSkeleton = ({ height = 260, className = '' }) => (
   </Busy>
 );
 
-export const ListSkeleton = ({ rows = 5, className = '' }) => (
-  <Busy label="Loading list" className={`card divide-y divide-line ${className}`}>
+export const ListSkeleton = ({ rows = 5, className = "" }) => (
+  <Busy
+    label="Loading list"
+    className={`card divide-y divide-line ${className}`}
+  >
     {Array.from({ length: rows }, (_, i) => (
       <div key={i} className="flex items-center gap-3 p-4">
         <Skeleton className="h-9 w-9 shrink-0" />
@@ -48,7 +55,10 @@ export const ListSkeleton = ({ rows = 5, className = '' }) => (
 );
 
 export const CardGridSkeleton = ({ count = 3 }) => (
-  <Busy label="Loading" className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+  <Busy
+    label="Loading"
+    className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+  >
     {Array.from({ length: count }, (_, i) => (
       <div key={i} className="card p-5">
         <div className="flex items-center gap-3">

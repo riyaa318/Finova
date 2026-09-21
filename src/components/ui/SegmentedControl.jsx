@@ -1,10 +1,16 @@
-import { useEffect, useRef } from 'react';
-import { gsap, useGSAP } from '../../motion/gsap';
-import { EASE } from '../../motion/tokens';
-import { prefersReducedMotion } from '../../motion/reducedMotion';
+import { useEffect, useRef } from "react";
+import { gsap, useGSAP } from "../../motion/gsap";
+import { EASE } from "../../motion/tokens";
+import { prefersReducedMotion } from "../../motion/reducedMotion";
 
-/** Radio-style pill group whose highlight glides to the selected option. */
-export default function SegmentedControl({ options, value, onChange, label, size = 'md', className = '' }) {
+export default function SegmentedControl({
+  options,
+  value,
+  onChange,
+  label,
+  size = "md",
+  className = "",
+}) {
   const groupRef = useRef(null);
   const pillRef = useRef(null);
   const buttons = useRef({});
@@ -14,7 +20,13 @@ export default function SegmentedControl({ options, value, onChange, label, size
     const target = buttons.current[value];
     if (!target || !pillRef.current) return;
     const props = { x: target.offsetLeft, width: target.offsetWidth };
-    if (animate && !prefersReducedMotion()) gsap.to(pillRef.current, { ...props, duration: 0.4, ease: EASE.strong, overwrite: true });
+    if (animate && !prefersReducedMotion())
+      gsap.to(pillRef.current, {
+        ...props,
+        duration: 0.4,
+        ease: EASE.strong,
+        overwrite: true,
+      });
     else gsap.set(pillRef.current, props);
   };
 
@@ -28,13 +40,22 @@ export default function SegmentedControl({ options, value, onChange, label, size
 
   useEffect(() => {
     const onResize = () => place(false);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   });
 
   return (
-    <div ref={groupRef} role="radiogroup" aria-label={label} className={`relative inline-flex max-w-full overflow-x-auto rounded-control bg-raised p-1 scrollbar-thin ${className}`}>
-      <span ref={pillRef} aria-hidden="true" className="absolute inset-y-1 left-0 rounded-[8px] bg-surface shadow-card ring-1 ring-line" />
+    <div
+      ref={groupRef}
+      role="radiogroup"
+      aria-label={label}
+      className={`relative inline-flex max-w-full overflow-x-auto rounded-control bg-raised p-1 scrollbar-thin ${className}`}
+    >
+      <span
+        ref={pillRef}
+        aria-hidden="true"
+        className="absolute inset-y-1 left-0 rounded-[8px] bg-surface shadow-card ring-1 ring-line"
+      />
       {options.map((option) => {
         const selected = option.value === value;
         return (
@@ -47,7 +68,7 @@ export default function SegmentedControl({ options, value, onChange, label, size
             role="radio"
             aria-checked={selected}
             onClick={() => onChange(option.value)}
-            className={`relative z-10 whitespace-nowrap rounded-[8px] font-semibold transition-colors duration-150 ${size === 'sm' ? 'px-3 py-1 text-caption' : 'px-3.5 py-1.5 text-small'} ${selected ? 'text-ink' : 'text-muted hover:text-ink'}`}
+            className={`relative z-10 whitespace-nowrap rounded-[8px] font-semibold transition-colors duration-150 ${size === "sm" ? "px-3 py-1 text-caption" : "px-3.5 py-1.5 text-small"} ${selected ? "text-ink" : "text-muted hover:text-ink"}`}
           >
             {option.label}
           </button>

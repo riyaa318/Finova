@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ------------------------------------------------------------------
-   Design tokens - RGB triplets so Tailwind can apply alpha (bg-accent/10)
-   ------------------------------------------------------------------ */
 :root {
   color-scheme: light;
 
@@ -27,7 +24,6 @@
   --success: 21 128 61;
   --info: 29 78 216;
 
-  /* categorical chart palette */
   --chart-1: 14 148 136;
   --chart-2: 79 70 229;
   --chart-3: 217 119 6;
@@ -40,7 +36,8 @@
   --scrim: 8 14 11;
 
   --shadow-card: 0 1px 2px rgb(13 22 19 / 0.05);
-  --shadow-pop: 0 18px 40px -12px rgb(13 22 19 / 0.22), 0 2px 8px rgb(13 22 19 / 0.06);
+  --shadow-pop:
+    0 18px 40px -12px rgb(13 22 19 / 0.22), 0 2px 8px rgb(13 22 19 / 0.06);
 }
 
 .dark {
@@ -77,7 +74,8 @@
   --scrim: 0 0 0;
 
   --shadow-card: none;
-  --shadow-pop: 0 20px 44px -12px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.04);
+  --shadow-pop:
+    0 20px 44px -12px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.04);
 }
 
 @layer base {
@@ -90,15 +88,26 @@
     min-width: 320px;
     overflow-x: hidden;
   }
-  h1, h2, h3 { text-wrap: balance; }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
   :focus-visible {
     outline: 2px solid rgb(var(--accent));
     outline-offset: 2px;
     border-radius: 6px;
   }
-  ::selection { background: rgb(var(--accent) / 0.25); }
-  input[type='date']::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; }
-  .dark input[type='date']::-webkit-calendar-picker-indicator { filter: invert(1); }
+  ::selection {
+    background: rgb(var(--accent) / 0.25);
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
 }
 
 @layer components {
@@ -111,7 +120,7 @@
       focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30
       disabled:cursor-not-allowed disabled:bg-raised disabled:text-subtle;
   }
-  .field-control[aria-invalid='true'] {
+  .field-control[aria-invalid="true"] {
     @apply border-danger focus:border-danger focus:ring-danger/30;
   }
   .page-container {
@@ -119,44 +128,75 @@
   }
   .skeleton {
     @apply rounded-control bg-raised;
-    background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.7), transparent);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--line) / 0.7),
+      transparent
+    );
     background-size: 200% 100%;
     animation: shimmer 1.8s ease-in-out infinite;
   }
-  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: rgb(var(--line-strong)) transparent; }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--line-strong)) transparent;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-/* Smooth (but brief) theme switch, toggled from ThemeProvider */
 html.theme-transition,
 html.theme-transition *,
 html.theme-transition *::before,
 html.theme-transition *::after {
-  transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, fill 0.35s ease, stroke 0.35s ease !important;
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease,
+    fill 0.35s ease,
+    stroke 0.35s ease !important;
 }
 
-/* Reduced motion: OS setting or the in-app override (html.reduce-motion) */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
-html.reduce-motion *, html.reduce-motion *::before, html.reduce-motion *::after {
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
 
-/* Recharts polish - theme-aware axes and grid (CSS beats the library's hard-coded attributes) */
-.recharts-cartesian-axis-tick-value { fill: rgb(var(--subtle)); font-size: 12px; font-family: inherit; }
-.recharts-cartesian-grid line { stroke: rgb(var(--line)); }
-.recharts-reference-line line { stroke: rgb(var(--line-strong)); }
-.recharts-wrapper:focus, .recharts-surface:focus { outline: none; }
-.recharts-tooltip-cursor { fill: rgb(var(--raised) / 0.6); }
+.recharts-cartesian-axis-tick-value {
+  fill: rgb(var(--subtle));
+  font-size: 12px;
+  font-family: inherit;
+}
+.recharts-cartesian-grid line {
+  stroke: rgb(var(--line));
+}
+.recharts-reference-line line {
+  stroke: rgb(var(--line-strong));
+}
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+.recharts-tooltip-cursor {
+  fill: rgb(var(--raised) / 0.6);
+}

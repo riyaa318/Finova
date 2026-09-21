@@ -1,14 +1,10 @@
-import { Suspense, useEffect, useRef, useState } from 'react';
-import { useLocation, useOutlet } from 'react-router-dom';
-import { gsap, useGSAP } from './gsap';
-import { EASE } from './tokens';
-import { prefersReducedMotion, useReducedMotion } from './reducedMotion';
-import { PageLoading } from '../components/ui/LoadingState';
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useLocation, useOutlet } from "react-router-dom";
+import { gsap, useGSAP } from "./gsap";
+import { EASE } from "./tokens";
+import { prefersReducedMotion, useReducedMotion } from "./reducedMotion";
+import { PageLoading } from "../components/ui/LoadingState";
 
-/**
- * Renders the active child route with a short exit -> enter transition (~450ms total).
- * The previous route's element is kept mounted until the exit tween finishes.
- */
 export default function PageTransition() {
   const { pathname } = useLocation();
   const outlet = useOutlet();
@@ -22,7 +18,8 @@ export default function PageTransition() {
   });
 
   useEffect(() => {
-    if (pathname === shown.key || reduced || !containerRef.current) return undefined;
+    if (pathname === shown.key || reduced || !containerRef.current)
+      return undefined;
     const tween = gsap.to(containerRef.current, {
       opacity: 0,
       y: -6,
@@ -42,7 +39,13 @@ export default function PageTransition() {
       gsap.fromTo(
         containerRef.current,
         { opacity: 0, y: 8 },
-        { opacity: 1, y: 0, duration: 0.32, ease: EASE.out, clearProps: 'opacity,transform' },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.32,
+          ease: EASE.out,
+          clearProps: "opacity,transform",
+        },
       );
     },
     { dependencies: [activeKey], scope: containerRef },
@@ -50,7 +53,9 @@ export default function PageTransition() {
 
   return (
     <div ref={containerRef}>
-      <Suspense fallback={<PageLoading />}>{settled ? outlet : shown.outlet}</Suspense>
+      <Suspense fallback={<PageLoading />}>
+        {settled ? outlet : shown.outlet}
+      </Suspense>
     </div>
   );
 }

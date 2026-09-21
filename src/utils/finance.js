@@ -1,25 +1,28 @@
-/**
- * Pure finance calculations. No storage, no React - everything is derived from
- * plain arrays so it is trivial to test and to move behind a real API later.
- */
-import { ANALYTICS_RANGES, BUDGET_WARNING_RATIO } from './constants';
-import { diffInDays, monthKey, parseISODate, shiftISO, startOfMonth, toISODate } from './dates';
+import { ANALYTICS_RANGES, BUDGET_WARNING_RATIO } from "./constants";
+import {
+  diffInDays,
+  monthKey,
+  parseISODate,
+  shiftISO,
+  startOfMonth,
+  toISODate,
+} from "./dates";
 
 const ROLLING_DAYS = 30;
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 const sum = (list, fn) => list.reduce((acc, item) => acc + fn(item), 0);
 
-/** Failed transactions never move money, so they are excluded from every total. */
-export const isCounted = (t) => t.status !== 'failed';
-export const signedAmount = (t) => (t.type === 'income' ? t.amount : -t.amount);
-export const percentChange = (current, previous) => (previous === 0 ? null : ((current - previous) / Math.abs(previous)) * 100);
+export const isCounted = (t) => t.status !== "failed";
+export const signedAmount = (t) => (t.type === "income" ? t.amount : -t.amount);
+export const percentChange = (current, previous) =>
+  previous === 0 ? null : ((current - previous) / Math.abs(previous)) * 100;
 
 export function totalsBetween(transactions, from, to) {
   let income = 0;
   let expenses = 0;
   for (const t of transactions) {
     if (!isCounted(t) || t.date < from || t.date > to) continue;
-    if (t.type === 'income') income += t.amount;
+    if (t.type === "income") income += t.amount;
     else expenses += t.amount;
   }
   return { income, expenses, savings: income - expenses };
@@ -34,15 +37,20 @@ export function rollingWindows(today, days = ROLLING_DAYS) {
   };
 }
 
-export function categoryBreakdown(transactions, from, to, type = 'expense') {
+export function categoryBreakdown(transactions, from, to, type = "expense") {
   const totals = new Map();
   for (const t of transactions) {
-    if (!isCounted(t) || t.type !== type || t.date < from || t.date > to) continue;
+    if (!isCounted(t) || t.type !== type || t.date < from || t.date > to)
+      continue;
     totals.set(t.category, (totals.get(t.category) ?? 0) + t.amount);
   }
   const total = [...totals.values()].reduce((a, b) => a + b, 0);
   return [...totals]
-    .map(([name, value]) => ({ name, value, share: total ? (value / total) * 100 : 0 }))
+    .map(([name, value]) => ({
+      name,
+      value,
+      share: total ? (value / total) * 100 : 0,
+    }))
     .sort((a, b) => b.value - a.value);
 }
 
@@ -61,7 +69,14 @@ export function monthlySeries(transactions, today, count) {
     const last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
     const from = toISODate(first);
     const to = i === count - 1 ? today : toISODate(last);
-    return { key: monthKey(first), from, to, date: from, granularity: 'month', ...totalsBetween(transactions, from, to) };
+    return {
+      key: monthKey(first),
+      from,
+      to,
+      date: from,
+      granularity: "month",
+      ...totalsBetween(transactions, from, to),
+    };
   });
 }
 
@@ -69,13 +84,16 @@ export function dailySpending(transactions, today, days = ROLLING_DAYS) {
   const series = bucketByDays(transactions, today, days, 1).map((b) => ({
     key: b.from,
     date: b.from,
-    granularity: 'day',
+    granularity: "day",
     amount: b.expenses,
     income: b.income,
   }));
   return series.map((point, i) => {
     const window = series.slice(Math.max(0, i - 6), i + 1);
-    return { ...point, average: Math.round(sum(window, (p) => p.amount) / window.length) };
+    return {
+      ...point,
+      average: Math.round(sum(window, (p) => p.amount) / window.length),
+    };
   });
 }
 
@@ -83,22 +101,38 @@ export function computeBudgetUsage(budgets, transactions, today) {
   const [from, to] = rollingWindows(today).current;
   const spentBy = {};
   for (const t of transactions) {
-    if (!isCounted(t) || t.type !== 'expense' || t.date < from || t.date > to) continue;
+    if (!isCounted(t) || t.type !== "expense" || t.date < from || t.date > to)
+      continue;
     spentBy[t.category] = (spentBy[t.category] ?? 0) + t.amount;
   }
   return budgets.map((budget) => {
     const spent = spentBy[budget.category] ?? 0;
     const ratio = budget.limit > 0 ? spent / budget.limit : 0;
-    const status = ratio >= 1 ? 'exceeded' : ratio >= BUDGET_WARNING_RATIO ? 'warning' : 'healthy';
-    return { ...budget, spent, remaining: budget.limit - spent, percent: ratio * 100, status };
+    const status =
+      ratio >= 1
+        ? "exceeded"
+        : ratio >= BUDGET_WARNING_RATIO
+          ? "warning"
+          : "healthy";
+    return {
+      ...budget,
+      spent,
+      remaining: budget.limit - spent,
+      percent: ratio * 100,
+      status,
+    };
   });
 }
 
 export function computeGoalProgress(goal, today) {
-  const percent = goal.targetAmount > 0 ? clamp((goal.currentAmount / goal.targetAmount) * 100, 0, 100) : 0;
+  const percent =
+    goal.targetAmount > 0
+      ? clamp((goal.currentAmount / goal.targetAmount) * 100, 0, 100)
+      : 0;
   const remaining = Math.max(0, goal.targetAmount - goal.currentAmount);
   const daysLeft = diffInDays(parseISODate(today), parseISODate(goal.deadline));
-  const status = remaining === 0 ? 'achieved' : daysLeft < 0 ? 'overdue' : 'active';
+  const status =
+    remaining === 0 ? "achieved" : daysLeft < 0 ? "overdue" : "active";
   const monthsLeft = Math.max(1, Math.ceil(daysLeft / 30));
   return {
     ...goal,
@@ -106,14 +140,20 @@ export function computeGoalProgress(goal, today) {
     remaining,
     daysLeft,
     status,
-    suggestedMonthly: status === 'active' ? Math.ceil(remaining / monthsLeft) : 0,
+    suggestedMonthly:
+      status === "active" ? Math.ceil(remaining / monthsLeft) : 0,
   };
 }
 
 export const currentBalance = (openingBalance, transactions) =>
   openingBalance + sum(transactions.filter(isCounted), signedAmount);
 
-export function computeDashboardStats({ transactions, goals, openingBalance, today }) {
+export function computeDashboardStats({
+  transactions,
+  goals,
+  openingBalance,
+  today,
+}) {
   const { current, previous } = rollingWindows(today);
   const cur = totalsBetween(transactions, ...current);
   const prev = totalsBetween(transactions, ...previous);
@@ -130,7 +170,11 @@ export function computeDashboardStats({ transactions, goals, openingBalance, tod
   }
   const line = (values) => values.map((value) => ({ value }));
 
-  const metric = (value, previousValue) => ({ value, previous: previousValue, change: percentChange(value, previousValue) });
+  const metric = (value, previousValue) => ({
+    value,
+    previous: previousValue,
+    change: percentChange(value, previousValue),
+  });
 
   return {
     asOf: today,
@@ -157,32 +201,50 @@ export function computeDashboardStats({ transactions, goals, openingBalance, tod
 }
 
 function rangeWindows(cfg, today) {
-  if (cfg.bucket === 'month') {
+  if (cfg.bucket === "month") {
     const now = parseISODate(today);
     const from = toISODate(startOfMonth(now, -(cfg.months - 1)));
     const previousTo = shiftISO(from, -1);
-    const previousFrom = toISODate(startOfMonth(parseISODate(from), -cfg.months));
+    const previousFrom = toISODate(
+      startOfMonth(parseISODate(from), -cfg.months),
+    );
     return { current: [from, today], previous: [previousFrom, previousTo] };
   }
   return rollingWindows(today, cfg.days);
 }
 
 function rangeBuckets(transactions, cfg, today) {
-  if (cfg.bucket === 'month') return monthlySeries(transactions, today, cfg.months);
-  if (cfg.bucket === 'week') {
-    return bucketByDays(transactions, today, Math.ceil(cfg.days / 7), 7).map((b) => ({ ...b, key: b.from, granularity: 'week' }));
+  if (cfg.bucket === "month")
+    return monthlySeries(transactions, today, cfg.months);
+  if (cfg.bucket === "week") {
+    return bucketByDays(transactions, today, Math.ceil(cfg.days / 7), 7).map(
+      (b) => ({ ...b, key: b.from, granularity: "week" }),
+    );
   }
-  return bucketByDays(transactions, today, cfg.days, 1).map((b) => ({ ...b, key: b.from, granularity: 'day' }));
+  return bucketByDays(transactions, today, cfg.days, 1).map((b) => ({
+    ...b,
+    key: b.from,
+    granularity: "day",
+  }));
 }
 
 const statusFor = (value, good, fair, higherIsBetter = true) => {
-  if (value == null) return 'fair';
-  if (higherIsBetter) return value >= good ? 'good' : value >= fair ? 'fair' : 'poor';
-  return value <= good ? 'good' : value <= fair ? 'fair' : 'poor';
+  if (value == null) return "fair";
+  if (higherIsBetter)
+    return value >= good ? "good" : value >= fair ? "fair" : "poor";
+  return value <= good ? "good" : value <= fair ? "fair" : "poor";
 };
 
-export function computeAnalytics({ transactions, budgets, goals, openingBalance, range, today }) {
-  const cfg = ANALYTICS_RANGES.find((r) => r.value === range) ?? ANALYTICS_RANGES[1];
+export function computeAnalytics({
+  transactions,
+  budgets,
+  goals,
+  openingBalance,
+  range,
+  today,
+}) {
+  const cfg =
+    ANALYTICS_RANGES.find((r) => r.value === range) ?? ANALYTICS_RANGES[1];
   const windows = rangeWindows(cfg, today);
   const [from, to] = windows.current;
 
@@ -193,11 +255,20 @@ export function computeAnalytics({ transactions, budgets, goals, openingBalance,
 
   const totals = totalsBetween(transactions, from, to);
   const previous = totalsBetween(transactions, ...windows.previous);
-  const savingsRate = totals.income ? (totals.savings / totals.income) * 100 : 0;
-  const previousRate = previous.income ? (previous.savings / previous.income) * 100 : 0;
+  const savingsRate = totals.income
+    ? (totals.savings / totals.income) * 100
+    : 0;
+  const previousRate = previous.income
+    ? (previous.savings / previous.income) * 100
+    : 0;
 
   const categories = categoryBreakdown(transactions, from, to);
-  const previousCategories = new Map(categoryBreakdown(transactions, ...windows.previous).map((c) => [c.name, c.value]));
+  const previousCategories = new Map(
+    categoryBreakdown(transactions, ...windows.previous).map((c) => [
+      c.name,
+      c.value,
+    ]),
+  );
   const topCategories = categories.slice(0, 5).map((c) => ({
     ...c,
     previous: previousCategories.get(c.name) ?? 0,
@@ -207,51 +278,61 @@ export function computeAnalytics({ transactions, budgets, goals, openingBalance,
   const spanDays = diffInDays(parseISODate(from), parseISODate(to)) + 1;
   const avgMonthlyExpenses = totals.expenses / Math.max(spanDays / 30, 1);
   const balance = currentBalance(openingBalance, transactions);
-  const runwayMonths = avgMonthlyExpenses > 0 ? balance / avgMonthlyExpenses : null;
+  const runwayMonths =
+    avgMonthlyExpenses > 0 ? balance / avgMonthlyExpenses : null;
   const usage = computeBudgetUsage(budgets, transactions, today);
-  const adherence = usage.length ? (usage.filter((u) => u.status !== 'exceeded').length / usage.length) * 100 : null;
-  const spendRatio = totals.income ? (totals.expenses / totals.income) * 100 : totals.expenses ? 100 : 0;
+  const adherence = usage.length
+    ? (usage.filter((u) => u.status !== "exceeded").length / usage.length) * 100
+    : null;
+  const spendRatio = totals.income
+    ? (totals.expenses / totals.income) * 100
+    : totals.expenses
+      ? 100
+      : 0;
 
   const indicators = [
     {
-      id: 'savings-rate',
-      label: 'Savings rate',
+      id: "savings-rate",
+      label: "Savings rate",
       value: savingsRate,
-      unit: 'percent',
-      target: '20% or more',
+      unit: "percent",
+      target: "20% or more",
       status: statusFor(savingsRate, 20, 10),
       score: clamp((savingsRate / 25) * 100, 0, 100),
     },
     {
-      id: 'spend-ratio',
-      label: 'Spending vs income',
+      id: "spend-ratio",
+      label: "Spending vs income",
       value: spendRatio,
-      unit: 'percent',
-      target: 'Below 80%',
+      unit: "percent",
+      target: "Below 80%",
       status: statusFor(spendRatio, 80, 95, false),
       score: clamp(100 - (spendRatio - 60) * 2, 0, 100),
     },
     {
-      id: 'budgets',
-      label: 'Budgets within limit',
+      id: "budgets",
+      label: "Budgets within limit",
       value: adherence,
-      unit: 'percent',
-      target: 'At least 85%',
+      unit: "percent",
+      target: "At least 85%",
       status: statusFor(adherence, 85, 60),
       score: adherence ?? 60,
     },
     {
-      id: 'runway',
-      label: 'Cash runway',
+      id: "runway",
+      label: "Cash runway",
       value: runwayMonths,
-      unit: 'months',
-      target: '6 months or more',
+      unit: "months",
+      target: "6 months or more",
       status: statusFor(runwayMonths, 6, 3),
-      score: runwayMonths == null ? 60 : clamp((runwayMonths / 6) * 100, 0, 100),
+      score:
+        runwayMonths == null ? 60 : clamp((runwayMonths / 6) * 100, 0, 100),
     },
   ];
   const score = Math.round(sum(indicators, (i) => i.score) / indicators.length);
-  const goalProgress = goals.length ? sum(goals, (g) => computeGoalProgress(g, today).percent) / goals.length : null;
+  const goalProgress = goals.length
+    ? sum(goals, (g) => computeGoalProgress(g, today).percent) / goals.length
+    : null;
 
   return {
     range: cfg.value,
@@ -268,11 +349,12 @@ export function computeAnalytics({ transactions, budgets, goals, openingBalance,
       savingsRate: savingsRate - previousRate,
     },
     categories,
-    incomeSources: categoryBreakdown(transactions, from, to, 'income'),
+    incomeSources: categoryBreakdown(transactions, from, to, "income"),
     topCategories,
     health: {
       score,
-      label: score >= 75 ? 'Strong' : score >= 50 ? 'Steady' : 'Needs attention',
+      label:
+        score >= 75 ? "Strong" : score >= 50 ? "Steady" : "Needs attention",
       indicators,
       goalProgress,
     },

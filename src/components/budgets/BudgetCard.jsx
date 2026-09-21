@@ -1,12 +1,12 @@
-import { useRef } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
-import { useFormatters } from '../../hooks/useFormatters';
-import { useHoverLift, useReveal } from '../../motion/hooks';
-import Badge from '../ui/Badge';
-import CategoryIcon from '../ui/CategoryIcon';
-import IconButton from '../ui/IconButton';
-import ProgressBar from '../ui/ProgressBar';
-import { BUDGET_STATUS } from './budgetStatus';
+import { useRef } from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { useFormatters } from "../../hooks/useFormatters";
+import { useHoverLift, useReveal } from "../../motion/hooks";
+import Badge from "../ui/Badge";
+import CategoryIcon from "../ui/CategoryIcon";
+import IconButton from "../ui/IconButton";
+import ProgressBar from "../ui/ProgressBar";
+import { BUDGET_STATUS } from "./budgetStatus";
 
 export default function BudgetCard({ budget, index = 0, onEdit, onDelete }) {
   const ref = useRef(null);
@@ -29,8 +29,19 @@ export default function BudgetCard({ budget, index = 0, onEdit, onDelete }) {
           </div>
         </div>
         <div className="-mr-1.5 flex shrink-0">
-          <IconButton label={`Edit ${budget.category} budget`} icon={Pencil} size="sm" onClick={() => onEdit(budget)} />
-          <IconButton label={`Delete ${budget.category} budget`} icon={Trash2} size="sm" tone="danger" onClick={() => onDelete(budget)} />
+          <IconButton
+            label={`Edit ${budget.category} budget`}
+            icon={Pencil}
+            size="sm"
+            onClick={() => onEdit(budget)}
+          />
+          <IconButton
+            label={`Delete ${budget.category} budget`}
+            icon={Trash2}
+            size="sm"
+            tone="danger"
+            onClick={() => onDelete(budget)}
+          />
         </div>
       </header>
 
@@ -39,11 +50,26 @@ export default function BudgetCard({ budget, index = 0, onEdit, onDelete }) {
         <span className="text-small text-muted">of {money(budget.limit)}</span>
       </p>
 
-      <ProgressBar value={budget.percent} tone={status.bar} label={`${budget.category} budget used`} className="mt-3" />
+      <ProgressBar
+        value={budget.percent}
+        tone={status.bar}
+        label={`${budget.category} budget used`}
+        className="mt-3"
+      />
 
       <footer className="mt-3 flex items-center justify-between text-small">
-        <span className={`font-semibold tabular-nums ${over ? 'text-danger' : 'text-muted'}`}>{Math.round(budget.percent)}% used</span>
-        <span className={`tabular-nums ${over ? 'font-semibold text-danger' : 'text-muted'}`}>{over ? `${money(-budget.remaining)} over budget` : `${money(budget.remaining)} left`}</span>
+        <span
+          className={`font-semibold tabular-nums ${over ? "text-danger" : "text-muted"}`}
+        >
+          {Math.round(budget.percent)}% used
+        </span>
+        <span
+          className={`tabular-nums ${over ? "font-semibold text-danger" : "text-muted"}`}
+        >
+          {over
+            ? `${money(-budget.remaining)} over budget`
+            : `${money(budget.remaining)} left`}
+        </span>
       </footer>
     </article>
   );

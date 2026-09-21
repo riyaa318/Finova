@@ -1,25 +1,33 @@
-import { useState } from 'react';
-import { useFinance } from '../../hooks/useContexts';
-import { useFormatters } from '../../hooks/useFormatters';
-import { EXPENSE_CATEGORIES } from '../../utils/constants';
-import { validateBudget } from '../../utils/validators';
-import SelectField from '../forms/SelectField';
-import TextField from '../forms/TextField';
-import Button from '../ui/Button';
-import Modal from '../ui/Modal';
+import { useState } from "react";
+import { useFinance } from "../../hooks/useContexts";
+import { useFormatters } from "../../hooks/useFormatters";
+import { EXPENSE_CATEGORIES } from "../../utils/constants";
+import { validateBudget } from "../../utils/validators";
+import SelectField from "../forms/SelectField";
+import TextField from "../forms/TextField";
+import Button from "../ui/Button";
+import Modal from "../ui/Modal";
 
-const FORM_ID = 'budget-form';
+const FORM_ID = "budget-form";
 
-export default function BudgetFormModal({ open, budget, existingCategories, onClose }) {
+export default function BudgetFormModal({
+  open,
+  budget,
+  existingCategories,
+  onClose,
+}) {
   const { addBudget, editBudget } = useFinance();
   const { symbol, code, toBase, toDisplay } = useFormatters();
   const isEdit = Boolean(budget);
   const taken = existingCategories.filter((c) => c !== budget?.category);
   const available = EXPENSE_CATEGORIES.filter((c) => !taken.includes(c));
 
-  const [values, setValues] = useState({ category: budget?.category ?? '', limit: budget ? String(toDisplay(budget.limit)) : '' });
+  const [values, setValues] = useState({
+    category: budget?.category ?? "",
+    limit: budget ? String(toDisplay(budget.limit)) : "",
+  });
   const [errors, setErrors] = useState({});
-  const [submitError, setSubmitError] = useState('');
+  const [submitError, setSubmitError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const change = (name, value) => {
@@ -33,14 +41,17 @@ export default function BudgetFormModal({ open, budget, existingCategories, onCl
     setErrors(found);
     if (Object.keys(found).length) return;
     setSubmitting(true);
-    setSubmitError('');
-    const payload = { category: values.category, limit: toBase(Number(values.limit)) };
+    setSubmitError("");
+    const payload = {
+      category: values.category,
+      limit: toBase(Number(values.limit)),
+    };
     try {
       if (isEdit) await editBudget(budget.id, payload);
       else await addBudget(payload);
       onClose();
     } catch (error) {
-      setSubmitError(error.message || 'Could not save this budget.');
+      setSubmitError(error.message || "Could not save this budget.");
     } finally {
       setSubmitting(false);
     }
@@ -51,7 +62,7 @@ export default function BudgetFormModal({ open, budget, existingCategories, onCl
       open={open}
       onClose={submitting ? undefined : onClose}
       size="sm"
-      title={isEdit ? 'Edit budget' : 'Add budget'}
+      title={isEdit ? "Edit budget" : "Add budget"}
       description="Limits reset on a rolling 30-day window."
       footer={
         <>
@@ -59,13 +70,16 @@ export default function BudgetFormModal({ open, budget, existingCategories, onCl
             Cancel
           </Button>
           <Button type="submit" form={FORM_ID} loading={submitting}>
-            {isEdit ? 'Save budget' : 'Add budget'}
+            {isEdit ? "Save budget" : "Add budget"}
           </Button>
         </>
       }
     >
       {submitError && (
-        <p role="alert" className="mb-4 rounded-control bg-danger/10 px-3 py-2.5 text-small font-medium text-danger">
+        <p
+          role="alert"
+          className="mb-4 rounded-control bg-danger/10 px-3 py-2.5 text-small font-medium text-danger"
+        >
           {submitError}
         </p>
       )}
@@ -74,11 +88,15 @@ export default function BudgetFormModal({ open, budget, existingCategories, onCl
           <SelectField
             label="Category"
             required
-            placeholder={available.length ? 'Choose a category' : 'Every category already has a budget'}
+            placeholder={
+              available.length
+                ? "Choose a category"
+                : "Every category already has a budget"
+            }
             options={available.map((c) => ({ value: c, label: c }))}
             value={values.category}
             error={errors.category}
-            onChange={(e) => change('category', e.target.value)}
+            onChange={(e) => change("category", e.target.value)}
             data-autofocus
           />
         </div>
@@ -91,7 +109,9 @@ export default function BudgetFormModal({ open, budget, existingCategories, onCl
             placeholder="0.00"
             value={values.limit}
             error={errors.limit}
-            onChange={(e) => change('limit', e.target.value.replace(/[^\d.]/g, ''))}
+            onChange={(e) =>
+              change("limit", e.target.value.replace(/[^\d.]/g, ""))
+            }
           />
         </div>
       </form>

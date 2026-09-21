@@ -1,15 +1,23 @@
-import { useRef } from 'react';
-import { gsap, useGSAP } from '../../motion/gsap';
-import { EASE } from '../../motion/tokens';
-import { prefersReducedMotion } from '../../motion/reducedMotion';
+import { useRef } from "react";
+import { gsap, useGSAP } from "../../motion/gsap";
+import { EASE } from "../../motion/tokens";
+import { prefersReducedMotion } from "../../motion/reducedMotion";
 
-const FILLS = { accent: 'bg-accent', success: 'bg-success', warning: 'bg-warning', danger: 'bg-danger' };
+const FILLS = {
+  accent: "bg-accent",
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-danger",
+};
 
-/**
- * Animated progress bar. GSAP owns the fill width: 0 -> value on first view (ScrollTrigger),
- * then old -> new whenever `value` changes. Exceeded bars get one gentle halo pulse.
- */
-export default function ProgressBar({ value, tone = 'accent', label, className = '', delay = 0, size = 'h-2' }) {
+export default function ProgressBar({
+  value,
+  tone = "accent",
+  label,
+  className = "",
+  delay = 0,
+  size = "h-2",
+}) {
   const trackRef = useRef(null);
   const fillRef = useRef(null);
   const first = useRef(true);
@@ -26,18 +34,41 @@ export default function ProgressBar({ value, tone = 'accent', label, className =
         return;
       }
       const pulse = () => {
-        if (tone !== 'danger') return;
-        gsap.fromTo(track, { boxShadow: '0 0 0 0 rgba(239,68,68,0)' }, { boxShadow: '0 0 0 4px rgba(239,68,68,0.2)', duration: 0.9, yoyo: true, repeat: 1, ease: 'sine.inOut' });
+        if (tone !== "danger") return;
+        gsap.fromTo(
+          track,
+          { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
+          {
+            boxShadow: "0 0 0 4px rgba(239,68,68,0.2)",
+            duration: 0.9,
+            yoyo: true,
+            repeat: 1,
+            ease: "sine.inOut",
+          },
+        );
       };
       if (first.current) {
         gsap.fromTo(
           fill,
-          { width: '0%' },
-          { width: `${pct}%`, duration: 1, delay, ease: EASE.emphasis, onComplete: pulse, scrollTrigger: { trigger: track, start: 'top 96%', once: true } },
+          { width: "0%" },
+          {
+            width: `${pct}%`,
+            duration: 1,
+            delay,
+            ease: EASE.emphasis,
+            onComplete: pulse,
+            scrollTrigger: { trigger: track, start: "top 96%", once: true },
+          },
         );
         first.current = false;
       } else {
-        gsap.to(fill, { width: `${pct}%`, duration: 0.8, ease: EASE.out, overwrite: true, onComplete: pulse });
+        gsap.to(fill, {
+          width: `${pct}%`,
+          duration: 0.8,
+          ease: EASE.out,
+          overwrite: true,
+          onComplete: pulse,
+        });
       }
     },
     { dependencies: [pct, tone], scope: trackRef },

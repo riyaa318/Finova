@@ -1,13 +1,13 @@
-import { useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Plus, Receipt } from 'lucide-react';
-import { useUI } from '../../hooks/useContexts';
-import { useReveal } from '../../motion/hooks';
-import TransactionListItem from '../transactions/TransactionListItem';
-import Button from '../ui/Button';
-import EmptyState from '../ui/EmptyState';
+import { useRef } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Plus, Receipt } from "lucide-react";
+import { useUI } from "../../hooks/useContexts";
+import { useReveal } from "../../motion/hooks";
+import TransactionListItem from "../transactions/TransactionListItem";
+import Button from "../ui/Button";
+import EmptyState from "../ui/EmptyState";
 
-export default function RecentTransactions({ transactions, className = '' }) {
+export default function RecentTransactions({ transactions, className = "" }) {
   const ref = useRef(null);
   const { openTransactionModal } = useUI();
   useReveal(ref);
@@ -18,7 +18,13 @@ export default function RecentTransactions({ transactions, className = '' }) {
           <h2 className="text-h3 text-ink">Recent transactions</h2>
           <p className="mt-0.5 text-small text-muted">Your latest activity</p>
         </div>
-        <Button as={Link} to="/transactions" variant="ghost" size="sm" iconRight={ArrowRight}>
+        <Button
+          as={Link}
+          to="/transactions"
+          variant="ghost"
+          size="sm"
+          iconRight={ArrowRight}
+        >
           View all
         </Button>
       </header>

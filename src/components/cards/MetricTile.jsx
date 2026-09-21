@@ -1,9 +1,15 @@
-import { useRef } from 'react';
-import AnimatedNumber from '../../motion/AnimatedNumber';
-import { useEntrance } from '../../motion/hooks';
+import { useRef } from "react";
+import AnimatedNumber from "../../motion/AnimatedNumber";
+import { useEntrance } from "../../motion/hooks";
 
-/** Small summary figure used above lists (budgets, goals, analytics). */
-export default function MetricTile({ label, value, format, hint, index = 0, children }) {
+export default function MetricTile({
+  label,
+  value,
+  format,
+  hint,
+  index = 0,
+  children,
+}) {
   const ref = useRef(null);
   useEntrance(ref, { delay: index * 0.07, y: 16 });
   return (

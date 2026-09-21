@@ -1,5 +1,8 @@
-export default function Tooltip({ label, children, side = 'top' }) {
-  const position = side === 'top' ? 'bottom-full mb-1.5 left-1/2 -translate-x-1/2' : 'top-full mt-1.5 left-1/2 -translate-x-1/2';
+export default function Tooltip({ label, children, side = "top" }) {
+  const position =
+    side === "top"
+      ? "bottom-full mb-1.5 left-1/2 -translate-x-1/2"
+      : "top-full mt-1.5 left-1/2 -translate-x-1/2";
   return (
     <span className="group/tt relative inline-flex">
       {children}
