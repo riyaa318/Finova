@@ -1,0 +1,4 @@
+import { Briefcase, Car, Clapperboard, GraduationCap, HeartPulse, Landmark, Laptop, Plane, Shield, ShoppingBag, Target, TrendingUp, Utensils, Wallet, Zap } from 'lucide-react';
+
+export const ICONS = { Briefcase, Car, Clapperboard, GraduationCap, HeartPulse, Landmark, Laptop, Plane, Shield, ShoppingBag, Target, TrendingUp, Utensils, Wallet, Zap };
+export const GOAL_ICON_OPTIONS = ['Shield', 'Laptop', 'Plane', 'GraduationCap', 'Target', 'Wallet'];

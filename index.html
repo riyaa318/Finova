@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="FINOVA - a personal finance and banking analytics dashboard." />
+    <meta name="theme-color" content="#080b0a" />
+    <title>FINOVA - Personal finance dashboard</title>
+    <script>
+      // Apply the saved (or system) theme before first paint to avoid a flash.
+      (function () {
+        try {
+          var saved = JSON.parse(localStorage.getItem('finova:theme') || 'null');
+          var dark = saved === 'dark' || ((saved === null || saved === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          var motion = JSON.parse(localStorage.getItem('finova:motion') || 'null');
+          if (motion === 'reduced') document.documentElement.classList.add('reduce-motion');
+        } catch (e) { /* storage unavailable - fall back to defaults */ }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
